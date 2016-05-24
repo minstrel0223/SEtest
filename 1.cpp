@@ -26,27 +26,30 @@ double distance(point p1, point p2)
 	return sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
 }
 set<Circle> cr;
-void refresh(point p, double r)
+
+   void remove(point p, double r)
 {
 	point temp;
 	for (int i = 0; i <= 2000; i++)
-	for (int j = 0; j <= 2000; j++)
-	{
-		temp.x = i; temp.y = j;
-		if (distance(temp, p) <= r)
-			dots[i][j] = 1;
-	}
+		for (int j = 0; j <= 2000; j++)
+		{
+			temp.x = i; temp.y = j;
+			if(distance(temp, p)<=r)
+				dots[i][j]=1;  
+		}
 }
-double calradius(point p)
-{
-	double minradius = min(min(min(p.x, p.y), 2000 - p.x), 2000 - p.y);
 
+double Getmr(point p)
+{
+	double mr =min(min( min(p.x, p.y),2000-p.x),2000-p.y);
+	
 	for (set<Circle>::iterator it = cr.begin(); it != cr.end(); it++)
 	{
-		minradius = min(minradius, distance(p, it->center) - it->radius);
+		mr = min(mr, distance(p, it->center) - it->radius);
 	}
-	return minradius;
+	return mr;
 }
+
 int main()
 {
 	int count = 2;
@@ -54,14 +57,13 @@ int main()
 	point a;
 	point b;
 	memset(dots, 0, sizeof(dots));
-	//refresh(a, 1);
 	double maxr = 0;
 	double sum = 0;
 	cin >> m;
 	m--;
 	a.x = 1000; a.y = 1000;
 	target.push_back(1000);
-	refresh(a, 1000);
+	remove(a, 1000);
 	cout << "1th radius " << 1000 / 1000 << " x: " << 0 << " y: " << 0 << endl;
 	cr.insert(Circle{ a, 1000 });
 	while (m--)
@@ -74,7 +76,7 @@ int main()
 			if (!dots[i][j])
 			{
 				a.x = i; a.y = j;
-				double temp = calradius(a);
+				double temp = Getmr(a);
 				if (temp > maxr)
 				{
 					maxr = temp;
@@ -85,7 +87,7 @@ int main()
 			}
 		}
 		dots[b.x][b.y] = 1;
-		refresh(b, maxr);
+		remove(b, maxr);
 		target.push_back(maxr);
 		cout << count++ << "th radius " << maxr / 1000 << " x: " << (double)b.x / 1000 - 1 << " y: " << (double)b.y / 1000 - 1 << endl;
 		cr.insert(Circle{ b, maxr });
